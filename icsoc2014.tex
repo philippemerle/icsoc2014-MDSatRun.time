@@ -100,7 +100,7 @@ We propose to focus on the student data activity access.
 we propose a simple use case to control access to the student data. During our approach based MDS patterns implementation, security policies are automatically generated (see Fig.~\ref{fig:policy}) and associated to "Scholarship" service (see Fig.~\ref{fig:wsdl}).
 
 \subsection{Securing services}
-Depending on the perceived security risks / system vulnerabilities, different security requirements can be set. Based on the ISO/IEC 27002, the OASIS Service Reference Model (~\cite{OAS06}) defines different security requirements (Condidentiality and privacy management, Integrity, Authentication, Authorisation, Availability and Non Repudiation) that  requires the deployment of security means from the network layer (which is rather focused on the availability requirement and protection against deny of service attacks)and transport layer (which has to provide secured confidential channel between tranmitters and receivers) to the Application layer which manages most of the security requirements (Authentication, Authorisation, Non repudiation, confidentiality and privacy...). Different standards such as WS-Security, SAML, XACML, BSLA...(see XX FIG ou tableau XX) have been developped to support these security requirements implementation.
+Depending on the perceived security risks / system vulnerabilities, different security requirements can be set. Based on the ISO/IEC 27002, the OASIS Service Reference Model (~\cite{OAS06}) defines different security requirements (Condidentiality and privacy management, Integrity, Authentication, Authorisation, Availability and Non Repudiation) that  requires the deployment of security means from the network layer (which is rather focused on the availability requirement and protection against deny of service attacks)and transport layer (which has to provide secured confidential channel between tranmitters and receivers) to the Application layer which manages most of the security requirements (Authentication, Authorisation, Non repudiation, confidentiality and privacy...). Different standards such as WS-Security, SAML, XACML, BSLA... have been developped to support these security requirements implementation.
 Such protection means can either be deployed directlty in the service operation or "attached" to the service interface specification. To this end, Security policies can be used to specify the required protection levels and means to be deployed, allowing an easier "upgrading" of protection requirement. 
 For example, authenticating students and or academic partners, building secured communication channels and establishing non repudiation features could be achieved by combining different protection means (see the secvurity policy that could be attached to the service) (Fig~\ref{fig:policy}). By this way, service operations are not affected while security requirements are taken into account.
 
@@ -110,7 +110,7 @@ For example, authenticating students and or academic partners, building secured 
 \caption{Security policies associated to « Scholarship » resource.}
 \label{fig:policy}
 \end{figure}
-These policies specify that the service has an operation named "ViewStudentData", which is considered as a resource (line 2 in Fig.~\ref{fig:policy}). This resource requires authentication (lines 2-8) by login /password (line 4) with the reference to the user authentication checking file specified on line 5. Besides authentication, access control (lines 9-16) using ACL (line 12), with time constraints (line 10) should be applied to this resource. Fig.~\ref{fig:acl} describes the contents of the  autorization file. It shows that users can access the resource at specific hours (between 6am and 12pm for user "user1").
+These policies specify that the scholarsh Management service has an operation named "ViewStudentData", which is considered as a resource (line 2 in Fig.~\ref{fig:policy}). This resource requires authentication (lines 2-8) by login /password (line 4) with the reference to the user authentication checking file specified on line 5. Besides authentication, access control (lines 9-16) using ACL (line 12), with time constraints (line 10) should be applied to this resource. Fig.~\ref{fig:acl} describes the contents of the  autorization file. It shows that users can access the resource at specific hours (between 6am and 12pm for user "user1").
  
  
 \begin{figure}
@@ -141,12 +141,6 @@ These security policies, which are in fact our security model at runtime, are as
 \label{fig:wsdl}
 \end{figure}
 
-\begin{figure}  
-\center
-\includegraphics[height=105pt,width=380pt]{scholarshipComposite.png}
-\caption{Link \emph{Scholarship} component with \textbf{MDS@Runtime} component.}
-\label{fig:gestionEtudiant}
-\end{figure}
 
 In our example,the student curriculum activity and the related information must be protected in the new "openned" context. This confidentiality requirement impacts both application layer which will be in charge of the access control (i.e. authentication and authorisation management) and the transport layer (Fig~\ref{fig:policy}). 
 To provide a consistent protection of the information system, the security policies must be used to compose and orchestrate security services accordingly. Taking into account more precise information on the execution context could improve both the service operation performance and the protection level, avoiding under / over protection deployment. In our example, each employee of the academic partners can accede to the curriculum activity from the already secured partner network. Once the security policy is attached to the collaborative workflow, access control including a systematic authentication is required to fulfill the non repudiation requirement as well as log features and network encryption, despite the secured access provided by the corporate infrastructure (namely authentication to unlock the workstation and secured infrastructure). (Table ~\ref{tab:tab1}) shows a comparison of service execution time with / without authentication and authorization.
@@ -259,14 +253,20 @@ The Encryption, Integrity and nonRepudiation components can use security protoco
 
 \label{sec:exemple}
 
-Our performance evaluation is based on the use case prsented section \ref{mdsToMds@Runtime}, focusing on the "ViewStudentData" operation. This operation is implemented thanks to a service associated to a security policy including 
-In order to enforce these security policies, the "Scholarship"  Web Service binding (line 6 Fig. ~\ref{fig:gestionEtudiant}) requires to be associated to the \textbf{MDS@Runtime}\footnote{The XML \emph{requires} attribute is the mean for FraSCAti to weave an aspect on SCA component.} composite. This specification allows to intercept calls of the service and invoke the  MDS@Runtime composite before invoking the business service itself.
+Our performance evaluation is based on the use case presented section \ref{mdsToMds@Runtime}, focusing on the "ViewStudentData" operation. This operation is implemented thanks to a service associated to a security policy including  (see Fig.~\ref{fig:policy}) authentication (lines 2-8) by login /password (line 4) and access control (lines 9-16) using ACL (line 12)combined with a time constraint (line 10).
 
+ In order to enforce these security policies, the "Scholarship"  Web Service binding (line 6 Fig. ~\ref{fig:gestionEtudiant}) requires to be associated to the \textbf{MDS@Runtime}\footnote{The XML \emph{requires} attribute is the mean for FraSCAti to weave an aspect on SCA component.} composite. This specification allows to intercept calls of the service and invoke the  MDS@Runtime composite before invoking the business service itself.
+\begin{figure}  
+\center
+\includegraphics[height=105pt,width=380pt]{scholarshipComposite.png}
+\caption{Link \emph{Scholarship} component with \textbf{MDS@Runtime} component.}
+\label{fig:gestionEtudiant}
+\end{figure}
 
 
 \begin{figure}  
 \center
-\includegraphics[height=150pt,width=350pt]{seqGestionEtudiant1.png}
+\includegraphics[height=120pt,width=380pt]{uml.png}
 \caption{Interactions inside  \textbf{MDS@Runtime} composite.}
 \label{fig:sequence}
 \end{figure}
@@ -293,7 +293,6 @@ Component & Run time execution(ms)   & Rate of run time \\[0.2cm]
 
 \end{tabular}
 \end{table}
-
 
 \begin{figure}[ht]  
 \centering
