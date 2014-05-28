@@ -1,4 +1,3 @@
-
 %%%%%%%%%%%%%%%%%%%%%%% file typeinst.tex %%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % This is the LaTeX source for the instructions to authors using
@@ -25,7 +24,7 @@
 \usepackage{url}
 \usepackage{subfigure}
 \urldef{\mailsa}\path|{wendpanga-francis.ouedraogo,frederique.biennier}@liris.cnrs.fr|
-\urldef{\mailsb}\path|{philippe.merle}@inria.fr|    
+\urldef{\mailsb}\path|philippe.merle@inria.fr|    
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\keywordname\enspace\ignorespaces#1}
 
@@ -34,10 +33,10 @@
 \mainmatter  % start of an individual contribution
 
 % first the title is needed
-\title{Contextualised security operation deployment through MDS@Runtime architecture}
+\title{Contextualised security operation deployment through MDS@run.time architecture}
 
 % a short form should be given in case it is too long for the running head
-\titlerunning{Lecture Notes in Computer Science: Authors' Instructions}
+\titlerunning{Contextualised security operation deployment through MDS@run.time}
 
 % the name(s) of the author(s) follow(s) next
 %
@@ -47,8 +46,7 @@
 %
 \author{Wendpanga Francis Ouedraogo\inst{1}
 \and Fr\'ed\'erique Biennier \inst{1} \and Philippe Merle\inst{2}}
-%
-\authorrunning{Contextualised security deployment through MDS@Runtime architecture}
+% \authorrunning{Contextualised security deployment through MDS@run.time architecture}
 % (feature abused for this document to repeat the title also on left hand pages)
 
 % the affiliations are given next; don't give your e-mail address
@@ -65,177 +63,178 @@
 % "llncs.dem" accompanies the document class "llncs.cls".
 %
 
-\toctitle{Lecture Notes in Computer Science}
-\tocauthor{Authors' Instructions}
+%\toctitle{Lecture Notes in Computer Science}
+%\tocauthor{Authors' Instructions}
+
 \maketitle
 
 \begin{abstract}
-The development of collaborative business leads to new challenges for corporate information systems such as interoperability, elastic deployment and security management in dynamic contexts. To fit these challenges one can take advantage of the agility and elasticity provided by Service Oriented Computing and Cloud Computing. To support an adaptive and contextualised security deployment providing a consistent protection level despite the changing contexts, we propose MDS@run.time the marriage of both Model Driven Security and Model@run.time approaches. Security policy models (produced by a MDS process) are interpreted at run.time depending on the context (Model@run.time). To this end we propose an architecture that can be plugged on any hosting middleware to manage the security mediation (i.e. select, compose and orchestrate security services) depending on the protection requirements defined in the security policy. A Security as a Service component is also proposed to support this "security outsourcing" strategy. This proposition is illustrated thanks to a Proof of Concept prototype built on top of the FraSCAti middleware.
+The development of collaborative business leads to new challenges for corporate information systems such as interoperability, elastic deployment and security management in dynamic contexts. To fit these challenges one can take advantage of the agility and elasticity provided by Service Oriented Computing and Cloud Computing. To support an adaptive and contextualised security deployment providing a consistent protection level despite the changing contexts, we propose MDS@run.time that is the marriage of both Model Driven Security (MDS) and Models@run.time approaches. Security policy models (produced by a MDS process) are interpreted at runtime depending on the context (Models@run.time). To this end, we propose an architecture that can be plugged on any hosting middleware to manage the security mediation (i.e. select, compose and orchestrate security services) depending on the protection requirements defined in the security policies. A Security as a Service component is also proposed to support this "security outsourcing" strategy. This proposition is illustrated thanks to a Proof of Concept prototype built on top of the FraSCAti middleware.
 \end{abstract}
 
 \section{Introduction}
-The development of collaborative business strategies leads to reorganize the corporate information system deployment in order to increase its agility. Taking advantage of the agility and interoperability of SOA, collaborative Business Process (BP) can efficiently be built by composing business services depending on business needs. Nevertheless, such collaborative organization challenges contextualized security deployment as a same business service may be used in different collaborative context and orchestrated using different runtime environment.
-To fit this challenge, we've proposed to extend the Model Driven security approach to capture information and services protection requirements using an “end user oriented” set of questions to capture the patrimonial importance of these elements so that confidentiality, availability, integrity requirements can be consistently defined and used to annotate the BP specification. Then we use a model driven generation process to define the security policies associated to the services implementing the collaborative BP.
-These security policies are seen as an abstract Model@Runtime protection specification. Depending on the runtime environment different security services must be selected and orchestrated to fulfill the protection requirements. To this end, we propose a SecurityModel@Runtime component that intercepts the service invocation, extracts its security policy and orchestrates the required protection services depending on the execution environment before launching the “functional” service. 
-After presenting briefly the context and state of the art limits, we detail our SecurityModel@Runtime, paying attention on the way it can be plugged on the service execution middleware before showing the impact on the execution performances due to the policy interpretation.
+The development of collaborative business strategies leads to reorganize the corporate information system deployment in order to increase its agility. Taking advantage of the agility and interoperability of Service-Oriented Architecture (SOA), collaborative Business Process (BP) can efficiently be built by composing business services depending on business needs. Nevertheless, such collaborative organization challenges contextualized security deployment as a same business service may be used in different collaborative contexts and orchestrated using different runtime environments.
+To fit this challenge, we have proposed to extend the Model Driven Security (MDS) approach~\cite{LS09} to capture information and service protection requirements using an “end-user oriented” set of questions to capture the patrimonial importance of these elements so that confidentiality, availability, and integrity requirements can be consistently defined and used to annotate the BP specification~\cite{OBG12}. Then we use a model-driven process to generate the security policies associated to the services implementing the collaborative BP.
 
-\section{From MDS to MDS@Runtime}
+In this paper, we propose MDS@run.time that is the marriage of both MDS and Models@run.time~\cite{blair2009models} approaches.
+In brief, security policies produced by a MDS process are interpreted at runtime depending on the context.
+Thus security policies are seen as an abstract Models@run.time protection specification.
+Depending on the runtime environment, different security services must be selected and orchestrated to fulfill the protection requirements.
+MDS@run.time is independent of any hosting middleware and
+is plugged on them to manage the security mediation (i.e. select, compose and orchestrate security services) depending on the protection requirements defined in the security policies.
+A MDS@run.time component intercepts each service invocation, extracts its security policy and orchestrates the required protection services depending on the execution environment before launching the “functional” service.
+A Security as a Service component is also proposed to support this "security outsourcing" strategy. 
+This approach is implemented by a proof of concept prototype built on top of the FraSCAti service-oriented middleware.
+
+We first present the context and the way MDS is extended in a SecurityModels@run.time vision and the related architecture (Section ~\ref{mdsToMds@Runtime}). We detail the way this architecture is implemented and plugged on FraSCAti middleware (section~\ref{mdsAtRuntimeWithFrascati}) and evaluate its performance (section~\ref{sec:evaluation}) before confronting our proposal with the related works (section ~\ref{relatedwork}).  
+
+
+\section{From MDS to MDS@run.time}
 \label{mdsToMds@Runtime}
-The increased importance of collaborative business strategies leads to reorganize the corporate information system deployment in order to increase its agility and interoperability so that common BP supporting these collaborative organisation can be efficiently designed and deployed. Taking advantage of the agility and interoperability of SOA and Cloud environments, such collaborative BP can be built by composing business services before deploying them on cloud platforms depending on the needs. This leads to a "de-perimetrised" information system organization, as business services can be selected,  composed and orchestrated in various contexts, challenging a consistent and contextualised business service protection.
-For example (Fig~\ref{fig:bp}), setting a e-government service to improve a scholarship management process lead to the development of a collaborative "on-line" e-governement organisation allowing both students, grant administration and academic partners to share students curriculum information. To this end, a common BP associated to scholarship business feature is built, combining services and personal workflows from both grant adaministration and academic partners, challenging new security features such as partner authentication, access control on the student information non repudiation...  
+The increased importance of collaborative business strategies leads to reorganize the corporate information system deployment in order to increase its agility and interoperability so that common BP supporting these collaborative organisations can be efficiently designed and deployed. Taking advantage of the agility and interoperability of SOA and Cloud environments, such collaborative BP can be built by composing business services before deploying them on cloud platforms depending on the needs. This leads to a "de-perimetrised" information system organisation, as business services can be selected, composed and orchestrated in various contexts, challenging a consistent and contextualised business service protection.
+As illustrated in Fig.~\ref{fig:bp}, setting an e-government service to improve a scholarship management process leads to the development of a collaborative "on-line" e-governement organisation allowing both students, grant administration and academic partners to share students' curriculum information. To this end, a common BP associated to scholarship business feature is built, combining services and personal workflows from both grant administration and academic partners, challenging new security features such as partner authentication, access control, non repudiation on the student information. 
 
-\begin{figure}[ht!]
+
+
+This collaborative BP is split among 3 lanes associated to the different participants (the student, the scholarship management service and the academic institution). Instead of exchanging paper/electronic forms containing student applications, curriculum information that must be the regional council opens its scholarship information system to allow academic institution and students to interact directly with the corresponding business services. As students' personal information are managed, a particular attention must be paid on privacy requirements. While any back-office scholarship employee can access without any control to the student scholarship resource, more precise authentication and authorisation processes must be deployed for the e-government execution: students can access via a secured connection to their own scholarship form whereas academic institution administrative staff should access to the validation forms for the students registered in one of their institution curriculum.
+
+\begin{figure}
 \centering
-\includegraphics[height=200pt, width=320pt]{scholarshipBP.png}
-\caption[Scholarship management process]{Scholarship management process\\ To illustrate our approach, we propose to use a process of the scholarship award by the region, which collaborate with the institute in a e-government logique. In this example, each student fill a scholarship application form, upload various documents (resume, cover letter, diplomas, ...) and submit its request. Then, the institute manager, view and check each student application data to ensure that it is compliant before sends it to the region. At the regional level, applications are analyzed by agents, who decide to award or not scholarships based on eligibility criteria. Once the decision is taken by these agents, a notification is sent to each student and each school principal is informed about the decision. Students whose applications have been accepted are then requested to send their bank account information to the region in order to trasfert scholarship money.
-In this example, the student application contains personnal data which require to be protected. For that, we have to secure these data against the unauthorized access.}
+\includegraphics[height=220pt, width=\linewidth]{scholarshipBP.png}
+\caption[Scholarship management process]{Scholarship management process.\\ The scholarship award collaborative process includes differents steps.Each student fills a scholarship application form, uploads various documents (resume, cover letter, diplomas, etc.) and submits its request. Then, the institute manager views and checks each student application data to ensure that it is compliant and sends it to the scholarship council. Applications are processed and decision are returned back before getting bank account information to process to the payment.}
 \label{fig:bp}
 \end{figure}
-
- 
-This collaborative BP is split among 3 lanes associated to the different participants (the student, the scholarship management service and the academic institution. Instead of exchanging paper / electronic forms containing student applications, curriculum information that must be the regional council opens its scholarchip information system to allow academic institution and students to interact directly with the corresponding business services. As students personal information are managed, a particular attention must be paid on privacy requirements. While any back-office scholarship employee can accede without any control to the student scholarship resource, more precise authentication and auhorisation processes must be deployed for the e-government execution : students can accede via a secured connection to their own scholarship form whereas academic institution administrative staff should accede to the validation forms for the students registered in one of their institution curriculum.
-
-
-
 \subsection{Securing services}
-Depending on the perceived security risks / system vulnerabilities, different security requirements can be set. Based on the ISO/IEC 27002, the OASIS Service Reference Model (~\cite{OAS06}) defines different security requirements (Condidentiality and privacy management, Integrity, Authentication, Authorisation, Availability and Non Repudiation) that  requires the deployment of security means from the network layer (which is rather focused on the availability requirement and protection against deny of service attacks)and transport layer (which has to provide secured confidential channel between tranmitters and receivers) to the Application layer which manages most of the security requirements (Authentication, Authorisation, Non repudiation, confidentiality and privacy...). Different standards such as WS-Security, SAML, XACML, BSLA... have been developped to support these security requirements implementation.
-Such protection means can either be deployed directlty in the service operation or "attached" to the service interface specification. To this end, Security policies can be used to specify the required protection levels and means to be deployed, allowing an easier "upgrading" of protection requirement. 
-
-
-
-we propose a simple use case to control access to the student data. During our approach based MDS patterns implementation, security policies are automatically generated (see Fig.~\ref{fig:policy}) and associated to "Scholarship" service (see Fig.~\ref{fig:wsdl}).
-
-
-Focusing on the service attached to the scholarship application form, a security policy can be set to define the different protection means to be deployed (see Fig.~\ref{fig:policy}). This service includes an  operation named "ViewStudentData", which is considered as a resource (line 2 in
-Fig.~\ref{fig:policy}). This resource requires authentication (lines 2-8) using a simple login /password process (line 4) refering to a checking file defined line 5. Besides authentication, access control (lines 9-16) using ACL (line 14),enforced  with a time constraints (line 12) should be applied to this resource. Fig.~\ref{fig:acl} describes the contents of the autorization file defining that users can accede the resource only at particular time periode (between 6am and 12pm for user "user1").
-
+Depending on the perceived security risks/system vulnerabilities, different security requirements can be set. Based on the ISO/IEC 27002, the OASIS Service Reference Model~\cite{OAS06} defines different security requirements (confidentiality and privacy management, integrity, authentication, authorisation, availability and non repudiation) that require the deployment of security means from the network layer, which is rather focused on the availability requirement and protection against deny of service attacks, and transport layer, which has to provide secured confidential channel between tranmitters and receivers, to the application layer, which manages most of the security requirements such as authentication, authorisation, non repudiation, confidentiality and privacy. Different standards such as WS-Security, SAML, XACML, BSLA, etc. have been developped to support and implement these security requirements.
+Such protection means can either be deployed directly in the service operation or "attached" to the service interface specification. To this end, security policies can be used to specify the required protection levels and means to be deployed, allowing an easier "upgrading" of protection requirement. 
 
 
 
 \begin{figure}  
 \centering
-\includegraphics[height=135pt, width=380pt]{scholarshipPolicies.png}
-\caption{Security policies associated to « Scholarship » resource.}
+\includegraphics[height=135pt, width=\linewidth]{scholarshipPolicies.png}
+\caption{Security policies associated to the \textit{Scholarship}  resource.}
 \label{fig:policy}
 \end{figure}
 
+Focusing on the service attached to the scholarship application form, a security policy can be set to define the different protection means to be deployed (see Fig.~\ref{fig:policy}). This service includes an operation named \textit{ViewStudentData}, which is considered as a resource (line 2 in
+Fig.~\ref{fig:policy}). This resource requires authentication (lines 2-8) using a simple login/password process (line 4) refering to a checking file defined line 5. Besides authentication, access control (lines 9-16) using ACL (line 14), enforced with a time constraint (line 12) should be applied to this resource. Fig.~\ref{fig:acl} describes the contents of the authorization file defining that users can access to the resource only at a particular time period, e.g., between 6am and 12pm for \textit{user1}.
  
 \begin{figure}
 \centering
-\includegraphics[height=55pt, width=380pt]{scholarshipAcl.png}
-\caption{Authorization file « AccessControlList.xml ».}
+\includegraphics[height=55pt, width=\linewidth]{scholarshipAcl.png}
+\caption{\textit{AccessControlList.xml} authorization file.}
 \label{fig:acl}
 \end{figure}
 
-
 \subsection{MDS for Services}
 
-Different methods can be used to set a consistent security policy, based on vulnerability and threats models as EBIOS, MEHARI, OCTAVE, SNA... However, they are complex and designed for a perimetrised environment and are not "end-user" oriented. To overcome these limits, business architects should be able to define security policies while building new BP. To this end, Model Driven Security can be used to attach security requirements specification in the BP and generate adapted security policies. In previous work, we have proposed in~\cite{OBG12} to enrich the MDS approach with a security pattern engineering strategy to capture protection requirements and deployment platform information to generate automatically the security policies that will be attached to the different services (see Fig~\ref{fig:mds}).
+Different methods can be used to set a consistent security policy based on vulnerability and threats models such as EBIOS, MEHARI, OCTAVE, SNA. However, they are complex and designed for a perimetrised environment and are not end-user oriented. To overcome these limits, business architects should be able to define security policies while building new BP. To this end, MDS can be used to attach security requirements specification in the BP and generate adapted security policies.
+In previous work~\cite{OBG12}, we have proposed to enrich the MDS approach with a security pattern engineering strategy to capture protection requirements and deployment platform information to generate automatically the security policies that will be attached to the different services (see Fig.~\ref{fig:mds}).
 
-\begin{figure}  
-
+\begin{figure}[ht!] 
 \centering
-\includegraphics[height=200pt, width=160pt]{mds.png}
-\caption{Security policy generation process based on MDS}
+\includegraphics[height=220pt,width=200pt]{mds.png}
+\caption{Security policy generation process based on MDS.}
 \label{fig:mds}
 \end{figure}
 
-These security policies, which are in fact our security model at runtime, are associated with the service description (see Fig.~\ref{fig:wsdl}), including the reference to the policy file (line 3). This allows during business service execution to identify the security policies to be applied.
+These security policies, which are in fact our security models at runtime, are associated with the service description (Fig.~\ref{fig:wsdl}, line 3). This allows during business service execution to identify the security policies to be applied.
 
-
-
-In our example,the student curriculum activity and the related information must be protected in the new "openned" context. This confidentiality requirement impacts both application layer which will be in charge of the access control (i.e. authentication and authorisation management) and the transport layer (Fig~\ref{fig:policy}). 
-
-To provide a consistent protection of the information system, the security policies must be used to compose and orchestrate security services accordingly. Taking into account more precise information on the execution context could improve both the service operation performance and the protection level, avoiding under / over protection deployment. In our example, each employee of the academic partners can accede to the curriculum activity from the already secured partner network. Once the security policy is attached to the collaborative workflow, access control including a systematic authentication is required to fulfill the non repudiation requirement as well as log features and network encryption, despite the secured access provided by the corporate infrastructure (namely authentication to unlock the workstation and secured infrastructure). (Table ~\ref{tab:tab1}) shows a comparison of service execution time with / without authentication and authorization,testing conditions and environment are detailed section \ref{sec:evaluation}.
-
-To avoid this costly over-protection or risky under-protection depending on the runtime environment vulnerability, we propose to turn these security policies as Model@runtime so that they can be analysed to select, compose and orchestrate the most convenient security services depending on the exact runtime environement. This requires a new architecture to "outsource" the security management as a new high-level service that can be plugged on the execution middleware. In the next section, we'll present this new architecture and a proof of concept based on the Frascati middleware.
 \begin{figure}[ht!]  
 \centering
-\includegraphics[height=120pt, width=380pt]{scholarshipWSDL.png}
-\caption{Link policy file with operation \emph{«ViewStudentData»} of the \emph{«Scholarship»} service WSDL.}
+\includegraphics[height=100pt, width=\linewidth]{scholarshipWSDL.png}
+\caption{Link policy file with the \emph{ViewStudentData} operation of the \emph{Scholarship} service.}
 \label{fig:wsdl}
-\end{figure} 
-\begin{table}
+\end{figure}
 
-\caption{Services execution time}
-\begin{tabular}{@{}*{2}{|p{5cm}}|}
+In our example, the student curriculum activity and the related information must be protected in the new \textit{opened} context. This confidentiality requirement impacts both application layer, which is in charge of the access control, i.e. authentication and authorisation management, and transport layer (see Fig.~\ref{fig:policy}). 
+
+To provide a consistent protection of the information system, the security policies must be used to compose and orchestrate security services accordingly. Taking into account more precise information on the execution context could improve both the service operation performance and the protection level, avoiding under/over protection deployment. In our example, each employee of the academic partners can access to the curriculum activity from the already secured partner network. Once the security policy is attached to the collaborative workflow, access control including a systematic authentication is required to fulfill the non repudiation requirement as well as log features and network encryption, despite the secured access provided by the corporate infrastructure (namely authentication to unlock the workstation and secured infrastructure). Table~\ref{tab:tab1} shows a comparison of service execution time with/without authentication and authorization, testing conditions and environment are detailed in Section~\ref{sec:evaluation}.
+
+\begin{table}
+\caption{Service execution time.}
+\begin{tabular}{|p{8cm}|c|}
 \hline
-Executed component & Run time execution(ms)\\
+Executed components & Execution time (ms)\\
   \hline
  Business service & 59\\
- Business service \& Authentication & 69\\ 
- Business service \& Authentication \& Autorization & 72\\ 
-
+ Business service + Authentication & 69\\ 
+ Business service + Authentication + Authorization & 72\\ 
     \hline
 \end{tabular}
 \label{tab:tab1}
 \end{table}
-\subsection{MDS@Runtime: Adapting security deployment in service operation}
 
-Implementing a Service Oriented Architecture (SOA) requires a middleware for both integration and distributed communication. Middleware plays an intermediary role between the client and the service provider. It is a software component which is located between the operating system and business applications and offers an abstraction high level for building distributed applications. It allows business services integration and management, and provides access to various external services ~\cite{SHLP05}. It is an integration solution which implements a fully distributed architecture (deployment on multiple nodes), providing services such as data processing or Content Based Routing (CBR), and a higher level of interoperability by use systematically standards such as XML, Web Services specifications and WS-* ~\cite{Lou08}.
+To avoid this costly over protection or risky under protection depending on the runtime environment vulnerability, we propose to turn these security policies as Models@run.time so that they can be analysed to select, compose and orchestrate the most convenient security services depending on the exact runtime environment. This requires a new architecture to \textit{outsource} the security management as a new high-level service that can be plugged on the hosting middleware. In the next sections, we present this new architecture and a proof of concept based on the FraSCAti middleware.
+
+\subsection{Adapting security deployment in service operation with MDS@run.time}
+
+Implementing a Service Oriented Architecture (SOA) requires a middleware for both integration and distributed communication. Middleware plays an intermediary role between the client and the service provider. It is a software component, which is located between the operating system and business applications, and offers a high level abstraction for building distributed applications. It allows business service integration and management, and provides access to various external services~\cite{SHLP05}. It is an integration solution, which implements a fully distributed architecture deployed on multiple nodes, providing services such as data processing or Content Based Routing (CBR), and a higher level of interoperability by systematically using standards such as XML, Web Services specifications aka WS-*, ~\cite{Lou08}.
  
-
-Our architecture is built on the traditional service / middleware / hosting platforms architecture (see Fig ~\ref{fig:archiA}). In order to avoid under or over protection depending on the runtime context, we propose to outsource the security management. As stated in the previous section, the security policy attached to the different business services expresses the protection requirement for this service. Plugged on the classical business service / middleware / hosting cloud platform(s) architecture, our MDS@Runtime environment (see Fig.~\ref{fig:archiB}) consists in :
+Our architecture is built on the traditional service/middleware/hosting platforms architecture (see Fig.~\ref{fig:archiA}). In order to avoid under or over protection depending on the runtime context, we propose to outsource the security management. As stated in the previous section, the security policy attached to each business service expresses the protection requirement for this service. Plugged on the classical business service/middleware/hosting cloud platform(s) architecture, our MDS@run.time architecture (see Fig.~\ref{fig:archiB}) consists in:
 
 \begin{itemize}
 \settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
 \itemsep5pt\relax
 \renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
-\item A specific Interceptor component plugged on the middleware intercepts the service /middleware interaction (step 1) and routes this interaction to the MDS@Runtime component (step 2) 
-\item	The MDS@runtime component  is the core component to acheive the dynamic security deployent. It consists in a 3 sub components : 
+\item A middleware specific \texttt{Interceptor} component plugged on the middleware intercepts each service/middleware interaction (step 1) and routes this interaction to the \texttt{MDS@run.time} component (step 2).
+\item	The \texttt{MDS@run.time} component is the core component to achieve the dynamic security deployment. It consists in three sub components:
 \begin{itemize}
-\item	The policy manager parses the service description, extracts and loads the associated policy files before launching the context acquisitopn process.
-\item The context manager collects information associated to the execution context (steps 3 and 4). It transfers the results to the security mediator.
-\item	The security mediator parses the security policy to get the protection level associated to each security service. Depending on the execution context, it selects and composes security services to implement the required protection. Then it orchestrates the security services invocation (steps 5 and 6) and if it succeedes it routes back the business service / middleware interaction to the middleware.
+\item	The \texttt{policy manager} parses the service description, extracts and loads the associated policy files before launching the context acquisition process.
+\item The \texttt{context manager} collects information associated to the execution context (steps 3 and 4). It transfers the results to the \texttt{security mediator}.
+\item	The \texttt{security mediator} parses the security policy to get the protection level associated to each security service. Depending on the execution context, it selects and composes security services to implement the required protection. Then it orchestrates the security service invocations (steps 5 and 6) and if succeeded, it routes back the business service/middleware interaction to the middleware.
 \end{itemize}
-\item The Security as a Service (IV) component gathers implementation of various security services (authentication, autorisation, integrity controls…) in a SaaS vision.
+\item The \texttt{Security as a Service} component gathers implementation of various security services (authentication, authorisation, integrity controls, etc.).
 \end{itemize}
 \begin{figure}
     \centering
-    \subfigure[Multilayer architecture]{\label{fig:archiA} \includegraphics[height=120pt, width=120pt]{architecture2.PNG}}
-    \subfigure[Multilayer architecture with MDS@Runtime]{\label{fig:archiB} \includegraphics[height=180pt, width=215pt]{architecture1.PNG}}
-    \caption{MDS@Runtime architecture}
-    \label{fig :archi}
+    \subfigure[Multi-layer architecture.]{\label{fig:archiA} \includegraphics[height=120pt, width=120pt]{architecture2.PNG}}
+    \subfigure[Multi-layer architecture with MDS@run.time.]{\label{fig:archiB} \includegraphics[height=180pt, width=215pt]{architecture1.PNG}}
+    \caption{MDS@run.time architecture.}
+    \label{fig:archi}
 \end{figure}
 
-\section{Implementation : MDS@Runtime with FraSCAti}
+\section{MDS@run.time with FraSCAti}
+\label{mdsAtRuntimeWithFrascati}
+FraSCAti\footnote{\url{http://frascati.ow2.org}}~\cite{SMF09} is an open source middleware framework to build, program, deploy, and execute adaptable service-oriented business applications.
+FraSCAti is based on the OASIS Service Component Architecture (SCA) standard\footnote{\url{http://www.oasis-opencsa.org/sca}}. FraSCAti applications can be deployed in different clouds (Amazon EC2, Amazon Elastic BeanTalk, Google App Engine, CloudBees, etc.)~\cite{MRS11}\cite{PHM12}\cite{fawaz2013COMPJ}. The adaptability at design time is based on the fact that the FraSCAti platform was designed as a plugin-based architecture to adapt it to different execution environments and to select on demand the required application functionalities compose FraSCAti~\cite{acher:inria-00614984}. The adaptability at execution time is based on the FraSCAti reflective features, which encompass introspection and reconfiguration of applications at runtime~\cite{SMR12}.
+For dealing with web services and REST, FraSCAti embeds Apache CXF\footnote{\url{http://cxf.apache.org}}, a well-known open source services framework.
 
-
-FraSCAti ~\footnote{\url{http://frascati.ow2.org}}~\cite{SMF09}~\cite{SMR12} is a middleware based on the OASIS Service Component Architecture (SCA) standard to build service-oriented and adaptable business applications. FraSCAti applications can be deployed in different clouds (Amazon EC2 , Amazon Elastic BeanTalk , Google App Engine, CloudBees , etc.)~\cite{MRS11}~\cite{PHM12}. The adaptability at the design is based on the fact FraSCAti platform was designed as a plugin-based architecture to adapt to different execution environments and to select on demand, the required application functionality to compose its platform. The adaptation to the execution is based on FraSCAti reflective features, which mean the capacity for applications introspection and reconfiguration at runtime. 
-
-FraSCAti provides a framework for programming, deploy and execute components achieving as services which are OASIS SCA standard compliant. To ensure the BP security deployed on cloud infrastructures, we pro- pose a security framework based on SCA components which can be plugged to FraSCAti platform. 
-
-Our prototype takes advantage of the Aspect Oriented Programming (AOP) and of the SCA model to deploy the interceptor, the mediation and the security services components. Fig.~\ref{fig:compoites} presents the key elements of our prototype.
+To ensure the BP security deployed on cloud infrastructures, we propose a MDS@run.time framework based on SCA components, which can be plugged to the FraSCAti platform. 
+Our prototype takes advantage of Aspect Oriented Programming (AOP) features~\cite{kiczales1997aspect} and of the SCA model, both provided by FraSCAti, to deploy the three \texttt{Interceptor}, \texttt{MDS@run.time} and \texttt{Security as a Service} components shown in Fig.~\ref{fig:composites}.
  
 \begin{figure}[ht]  
 \centering
 \includegraphics[height=150pt, width=350pt]{composites2.png}
-\caption{Security composites.}
-\label{fig:compoites}
+\caption{MDS@run.time with FraSCAti.}
+\label{fig:composites}
 \end{figure}
 
+\subsection{FraSCAti Intent for MDS@run.time}
+SCA provides the notion of intent, which is an abstraction for designating a non-functional property such as security, transaction, logging, etc.
+With FraSCAti, SCA intents are implemented as SCA components, then both business and non-functional concerns are designed then implemented in the same framework aka SCA.
 
-\subsection{FraSCAti Intent for MDS@Runtime}
- The \emph{Intent} component is responsible for detecting and intercepting business services invoked  by clients. This component uses the aspect-oriented programming (AOP) techniques implemented in FraSCAti to perform actions before, during and after each business services invocation. These techniques use the Apache CXF interception mechanisms embedded in FraSCAti. This Intent component include a \emph{Request} object which plays the intermediary role between FraSCAti middleware and security services. This object provides a bidirectional interface that allows the component Intent to formalize the interaction messages received from the FraSCAti platform and also to specify orders toward the FraSCAti platform which performs some technical actions. it ensures a total independence between the FraSCAti middleware and our security system, allowing one hand, the security services,  to be able to deploy and run on any other middleware and second hand, to deploy on a specific platform just the required security services.
+The \texttt{Intent} component is responsible for detecting and intercepting business services invoked by clients. This component uses AOP techniques provided by FraSCAti to perform actions before, during and after each business service invocation. 
+These techniques use the Apache CXF interception mechanism. The \texttt{Intent} component creates a \texttt{Request} object, which plays the intermediary role between the FraSCAti middleware and security services. This object provides a bidirectional interface that allows the \texttt{Intent} component to formalize the interaction messages received from Apache CXF and also to specify orders towards Apache CXF. The \texttt{Request} object ensures a total independence between our MDS@run.time components and the underlying service-oriented middleware, allowing on one hand the security services to be able to deploy and run on any other middleware and on another hand to deploy on a specific platform just the required security services.
 
-\subsection{Composite MDS@Runtime}
-The \textbf{MDS@Runtime}  composite is invoked by the intent component of the interceptor composite. It includes:
-
+\subsection{Composite MDS@run.time}
+The \texttt{MDS@run.time} composite\footnote{An SCA composite is an SCA component containing a set of SCA components.} is invoked by the \texttt{Intent} component of the \texttt{Inter\-ceptor} composite. It includes:
 
 \begin{itemize}
 \settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
 \itemsep8pt\relax
 \renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
 
-\item The \emph{Mediator} component is responsible for analyzing called service requests intercepted by the  \emph{Intent} component and  encapsulated by the \emph{Request} component. It also identify the security policies rules associated to business service with which the client needs to interact. Thus, through the \emph{Request} component, the \emph{Mediator} receives information of the services involved in the interaction. This information is used to get policies associated to resources (the business services functionality implemented by service operation). These policies are then analyzed and orchestrated by the \emph{Mediator} to call the required security services.
-\item The \emph{PolicyManager} component manages the policies. It receives from the \emph{Mediator} the resource or service reference requested and the policy file link. It returns to the \emph{Mediator} the list of policies to apply.
-\item The \emph{ContextManager} component analyses security policies associated to services and identifies the different policies to be applied according to the user context, the execution environment and security policies associated to the client and service provider. It also provides to the \emph{Mediator} component information such as policies and policies rules related to the execution context. These policy rules are used by the \emph{Mediator} component to call the technical security services.
+\item The \texttt{Mediator} component is responsible for analyzing called service requests intercepted by the \texttt{Intent} component and  encapsulated into a \texttt{Request} object. It also identifies the security policy rules associated to business services invoked by clients. Thus, through the \texttt{Request} object, the \texttt{Mediator} receives information of the services involved in the interaction. This information is used to get policies associated to resources (the business services functionality implemented by the service operation). These policies are then analyzed and orchestrated by the \texttt{Mediator} to call the required security services.
+\item The \texttt{PolicyManager} component manages the policies. It receives from the \texttt{Mediator} the resource or service reference requested and the link to the policy file. It returns to the \texttt{Mediator} the list of security policies to apply.
+\item The \texttt{ContextManager} component analyses security policies associated to services and identifies the different policies to be applied according to the user context, the execution environment and security policies associated to the client and service provider. It also provides to the \texttt{Mediator} component information such as policies and policy rules related to the execution context. These policy rules are used by the \texttt{Mediator} component to call the technical security services.
 \end{itemize}
 
 
 \subsection{Composite SecaaS}
 
-The \textbf{Security as a Service} composite is invoked by the service mediator. It includes various security services which allow protecting resources and business services according to security "as a service" approach. This composite contains the following components:
+The \texttt{Security as a Service} composite is invoked by the \texttt{Mediator} component. It includes various security services, which allow protecting resources and business services according to a \textit{security as a service} approach. This composite contains the following components:
 
 
 \begin{itemize}
@@ -243,19 +242,18 @@ The \textbf{Security as a Service} composite is invoked by the service mediator.
 \itemsep8pt\relax
 \renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
 
-\item The \emph{SecaaS} component is the composite entry point. It receives from \emph{Mediator} component, the security policies to be applied. It is responsible for analyzing these policies, to identify the type of security services (authentication, authorization , etc. . ) to call.
-\item The \emph{Authentication} component is used to prove the user identity  ( of human or other service). This component receives from SecaaS component, the policy rule to apply, extract information about the security pattern and invokes the security mechanism to be applied. It can be a weak authentication mechanism such as login / password or Strong Authentication such as One Time Password (OTP) or two factors authentication. This authentication component includes subcomponents such as \emph{SSORegistry} ( SSO Single Sign On) component used to store information about sessions authentication  and allow to retrieve user information without restarting authentication.
+\item The \texttt{SecaaS} component is the composite entry point. It receives from the \texttt{Mediator} component the security policies to be applied. It is responsible for analyzing these policies, to identify the type of security services (authentication, authorization, etc.) to call.
+\item The \texttt{Authentication} component is used to prove the user identity (of human or other service). This component receives from the \texttt{SecaaS} component the policy rule to apply, extracts information about the security pattern and invokes the security mechanism to be applied. It can be a weak authentication mechanism such as login/password or strong authentication such as One Time Password (OTP) or two factors authentication. This \texttt{Authentication} component includes subcomponents such as \texttt{SSORegistry} (Single Sign On Registry) component used to store information about  authentication of sessions and to allow to retrieve user information without restarting authentication.
 
-\item The \emph{Authorization} component allows managing access to resource or service and allows grant or deny the user access to the service. As the authentication , it receives the security policy rule and invokes the authorization mecanism to be applied. This mecanism can be  based on a authorization by role (RBAC) implemented by XACML authorization protocol or a simple Access Control List ( ACL).
-\item The Encryption component provides data and messages encryption and decryption mechanism. It also provides secure protocols using  to secure communication (SSL).
-\item The \emph{Integrity} component ensures the data and messages integrity exchanged by using messages signature or hash functions.
-\item The \emph{Nonrepudiation} component is responsible for recording user actions (authentication, access to data or service, data modification / destruction, etc . ). This information can then be used for auditing and monitoring.
-\item The \emph{Availability} component is responsible for the services availability providing access to the service or a clone (redundant service) thereof if the original target service is unavailable. This component also provides backup mechanism to restore system data and services after disaster.
-
+\item The \texttt{Authorization} component allows managing access to resources and services, and allows grant or deny the user access to them. As the \texttt{Authentication} component, it receives the security policy rule and invokes the authorization mechanism to be applied. This mechanism can be based on an authorization by role (RBAC) implemented by the XACML authorization protocol or a simple Access Control List (ACL).
+\item The \texttt{Encryption} component provides data and messages encryption/decryption mechanisms. It also provides secure protocols using secure communication (SSL).
+\item The \texttt{Integrity} component ensures the integrity of exchanged data and messages by using message signatures or hash functions.
+\item The \texttt{NonRepudiation} component is responsible for recording user actions (authentication, access to data or service, data modification/destruction, etc.). This information can then be used for auditing and monitoring.
+\item The \texttt{Availability} component is responsible for the services' availability providing access to the service or a clone (redundant service) thereof if the original target service is unavailable. This component also provides backup mechanism to restore system data and services after disaster.
 
 \end{itemize}
 
-The Encryption, Integrity and nonRepudiation components can use security protocols such as WS-Security XML Encryption and XML Signature which provide encryption and signing  exchanged messages mechanisms.
+The \texttt{Encryption}, \texttt{Integrity} and \texttt{NonRepudiation} components can use security protocols such as WS-Security XML Encryption and XML Signature, which provide encryption and signing exchanged message mechanisms.
 
 
 \section{Evaluation}
@@ -263,120 +261,119 @@ The Encryption, Integrity and nonRepudiation components can use security protoco
 \label{sec:evaluation}
 
 
- Our performance evaluation is based on the use case presented in section~\ref{mdsToMds@Runtime}, focusing on the "ViewStudentData" operation. This operation is implemented thanks to a service associated to a security policy (see Fig.~\ref{fig:policy}) including authentication (lines 2-8) by login /password (line 4) and access control (lines 9-16) using ACL (line 12)combined with a time constraint (line 10). As far as the e-government is concerned, the business service is encapsulated in a « e-gov Scholarship service » which is associated to the convenient security policy and refers to the to be associated to the MDS@Runtime composite (~\ref{fig:gestionEtudiant}, line 6). By this way, the business service can be intercepted and the MDS@Rutime composite can be invoked before invoking the business service itself.
-Fig.~\ref{fig:sequence} presents the interaction of the different components.
-\\To evaluate the impact of our MDS@Runtime architecture on the service execution time, we set a test environment using Frascati version 1.6 on Microsoft windows 7 Professional (32 bit) using a 2,54GHz processor Intel(R) Core(TM)2 Duo CPU with 4Go of Memory.
-We set different types of measures : a first execution invokes the business service without invokng our security architecture (measure 1 used to set a reference time), the time between the intent invocation and the MDS@Runtime invocation measures the cost for the service interception. Then, the time required to get the policy file and parsed it is expressed by the mediation measure. Lastly execution times related to the authentication process and to the autorisation process are described.
-We manage a test loop to compute a time average so that extra factors impacts can be  smootthed.
-The main results show that the interception and mediation process represents only 8\% of the total execution. 
+ Our performance evaluation is based on the use case presented in Section~\ref{mdsToMds@Runtime}, focusing on the \textit{ViewStudentData} operation. This operation is implemented thanks to a service associated to a security policy including authentication (see Fig.~\ref{fig:policy}, lines 2-8) by login/password (line 4) and access control (lines 9-16) using ACL (line 12) combined with a time constraint (line 10). As far as the e-government is concerned, the business service is encapsulated in an \textit{e-gov Scholarship service}, which is associated to the convenient security policy and refers to the \texttt{MDS@run.time} composite (Fig.~\ref{fig:gestionEtudiant}, line 6). By this way, the business service can be intercepted and MDS@run.time is invoked before invoking the business service itself.
 
 \begin{figure}  
 \center
-\includegraphics[height=105pt,width=380pt]{scholarshipComposite.png}
-\caption{Link \emph{Scholarship} component with \textbf{MDS@Runtime} component.}
+\includegraphics[height=105pt,width=\linewidth]{scholarshipComposite.png}
+\caption{Link the \emph{Scholarship} component with \textbf{MDS@run.time}.}
 \label{fig:gestionEtudiant}
 \end{figure}
 
+% Fig.~\ref{fig:sequence} presents the runtime interactions of our different components. This figure has been produced by the FraSCAti Explorer tool~\cite{SMF09}, which captures component interactions as UML sequence diagrams.
 
-\begin{figure}  
-\center
-\includegraphics[height=120pt,width=380pt]{umlDiag.png}
-\caption{Interactions inside  \textbf{MDS@Runtime} composite.}
-\label{fig:sequence}
-\end{figure}
+% \begin{figure}  
+% \center
+% \includegraphics[height=120pt,width=\linewidth]{umlDiag.png}
+% \caption{Interactions inside the \textbf{MDS@run.time} composite.}
+% \label{fig:sequence}
+% \end{figure}
 
-
-Thank to FraSCAti Explorer tool ~\cite{SMF09}, it is possible, as shown in Fig. ~\ref{fig:sequence}, to follow the invocation of  \textbf{MDS@Runtime} composite components as a UML sequence diagram.
-
+To evaluate the impact of our \textit{MDS@run.time with FraSCAti} prototype on the service execution time, we set a test environment using FraSCAti version 1.6 with Oracle Java Virtual Machine 1.7.0\_51 on Microsoft Windows 7 Professional (32 bit) using a 2,54GHz processor Intel(R) Core(TM)2 Duo CPU with 4Go of memory.
+We set different types of measures: A first execution invokes the business service without invoking our security architecture (measure 1 used to set a reference time), the time between the intent invocation and the MDS@run.time invocation measures the cost for the service interception. Then, the time required to get the policy file and parsed it is expressed by the mediation measure. Lastly execution times related to the authentication process and to the authorisation process are given.
+We manage a test loop to compute an average time on 100 client requests, so that extra factor impacts can be smoothed, such as bootstrapping effects, Just-In-Time compilation, etc.
 
 \begin{table}
 
-\caption{Components execution times}
-\begin{tabular}{|l@{}*{3}{|p{4.1cm}}|@{} }
+\caption{Mean execution time of \textbf{MDS@run.time} components.}
+%\begin{tabular}{|l@{}*{3}{|p{4.1cm}}|@{} }
+\begin{tabular}{|p{0.4cm}|p{3.8cm}|c|c|}
 \hline
-N° &Component &   Component execution time average (ms) &  Component execution time  average/Total execution time \\[0.2cm]
+No & Component &   Average execution  &  Average execution time / \\
+ &  &   time (ms) &  Total execution time \\
   \hline
- 1 & FraSCAti \& CXF \& Business service & 59&  76\%\\
-2 & FraSCAti Interceptor & 2&  3\%\\ 
-3 & MDS@Runtime & 4&  5\%\\
- 4 & Authentication& 10& 13\%\\
-5 & Autorization & 3& 4\%\\
+ 1 & FraSCAti + Apache CXF + Business service & 59 &  76\%\\
+2 & FraSCAti Interceptor & 2 &  3\%\\ 
+3 & MDS@run.time & 4 &  5\%\\
+ 4 & Authentication& 10 & 13\%\\
+5 & Authorization & 3 & 4\%\\
  \hline
- &  Total & 78& 100\%\\
+ &  Total & 78 & 100\%\\
     \hline
 
 \end{tabular}
 \end{table}
-\newpage
-\section{Related works}
 
-Different strategies can be used to provide a consistent protection on Distributed Information Systems, paying attention on both organisational and infrastructure related risks. On one hand, « Security by Design » approaches integrate protection requirements while designing the information system. To this end, different frameworks have been defined to manage security annotations on UML diagrams (such as the multi-purpose UMLSec ~\cite{JJ02} or the rather access control oriented  Secure UML ~\cite{LBD02} Domain Specific languages) or BPMN diagrams (such as ~\cite{WMS09} ~\cite{SSL09}). Taking advantage of such high-level specification, the Model Driven Security (MDS for short)  ~\cite{LS09} ~\cite{LZN14} adapts the MDA approach to the security field. Several studies have focused on the use of the MDS approach to secure BP and led to frameworks definition like OpenPMF (~\cite{LU10},), SECTET ~\cite{AHB08} and BPSec ~\cite{RFP07}. Nevertheless, none of them support the full transformation process : while BPSec is focused on the requirement engineering part (it includes CIM and PIM models), SECTET and Open PMF provide PIM, PSM and code generation features. Moreover, the generation process is achieved according to a « static » environment vision, i.e. they do not allow any adaptation depending on the execution context. This can lead to under or over-protection depending on the real vulnerabilities / risks associated to the execution platform. Such static infrastructure vision also does not fit the scalable and elastic deployment provided by cloud environments.
-On the other hand, Platform Dependent Protection works have been conducted to organise a consistent protection level on cloud based infrastructure such as CSA protection stack ~\cite{CSA11} whereas monitoring systems (such as intrusion Detection System ~\cite{MPB12}, vulnerabilities checking ~\cite{AVG11}) are used integrate information on the execution context  and then the protection means accordingly. Nevertheless, these works are focused on a « hosting platform protection» vision and do not integrate an « end to end » protection vision. To this end, the security stack defined in the  OASIS Service reference model defines the way protection requirements should be implemented in a multi-layer architecture (application / Middleware-Transport / network) to improve the global protection consistency while deploying security features associated to a standardised security policy. Nevertheless, this coarse-grain model does not integrate any governance loop so that the execution context can be taken into account while deploying the required protection, leading to either over or under-protection.
-To overcome this limit, our MDS@Runtime solution takes advantage of the OASIS security model and of the MDS approach to generate security policies depending on the collaborative BP organisational context (~\cite{OFG13}) so that services can be secured « on demand ». Moreover, it provides a fullt oursourced security environment that can be plugged on the service middleware. Thanks to the execution platform information, collected by the Security Mediator component, security services are selected, composed and orchestrated in a transparent and consistent way, avoiding the costly over protection and the risky under-protection.
+The main result is that the interception and mediation process represents only 8\% of the total execution.
+This overhead could certainly reduced within an industrial implementation of \textbf{MDS@run.time}.
+However this demonstrates that our \textbf{MDS@run.time} approach, i.e. interpretation of security policies at runtime, introduces a small overhead compared to over protecting services.
 
-
+\section{Related work}
+\label{relatedwork}
+Different strategies can be used to provide a consistent protection on distributed information systems, paying attention on both organisational and infrastructure related risks. On one hand, \textit{Security by Design} approaches integrate protection requirements while designing the information system. To this end, different frameworks have been defined to manage security annotations on UML diagrams (such as the multi-purpose UMLSec~\cite{JJ02} or the rather access control oriented  Secure UML~\cite{LBD02} domain specific languages) or BPMN diagrams (such as~\cite{WMS09} and~\cite{SSL09}). Taking advantage of such high-level specification, MDS~\cite{LS09}\cite{LZN14} adapts the Model Driven Engineering (MDE) approach to the security field. Several studies have focused on the use of the MDS approach to secure BP and led to frameworks definition like OpenPMF~\cite{LU10}, SECTET~\cite{AHB08} and BPSec~\cite{RFP07}. Nevertheless, none of them support the full transformation process. While BPSec is focused on the requirement engineering part (it includes CIM and PIM models), SECTET and Open PMF provide PIM, PSM and code generation features. Moreover, the generation process is achieved according to a static environment vision, i.e. they do not allow any adaptation depending on the execution context. This can lead to under or over protection depending on the real vulnerabilities/risks associated to the execution platform. Such static infrastructure vision also does not fit the scalable and elastic deployment provided by cloud environments.
+On the other hand, \textit{Platform Dependent Protection} works have been conducted to organise a consistent protection level on cloud based infrastructure such as CSA protection stack~\cite{CSA11} whereas monitoring systems, such as intrusion Detection System~\cite{MPB12}, vulnerabilities checking~\cite{AVG11}, are used integrate information on the execution context and then the protection means accordingly. Nevertheless, these works are focused on a \textit{hosting platform protection} vision and do not integrate an end-to-end protection vision. To this end, the security stack defined in the OASIS Service reference model defines the way protection requirements should be implemented in a multi-layer architecture (application/Middleware-Transport/network) to improve the global protection consistency while deploying security features associated to a standardised security policy. Nevertheless, this coarse-grain model does not integrate any governance loop so that the execution context can be taken into account while deploying the required protection, leading to either over or under protection.
+To overcome this limit, our MDS@run.time approach takes advantage of the OASIS security model and of the MDS approach to generate security policies depending on the collaborative BP organisational context~\cite{OFG13} so that services can be secured on demand. Moreover, it provides a fully oursourced security environment that can be plugged on any service-oriented middleware. Thanks to the execution platform information, collected by the \texttt{Mediator} component, security services are selected, composed and orchestrated in a transparent and consistent way, avoiding the costly over protection and the risky under protection.
 
 
 \section{Conclusion}
-Securing Collaborative Business Process deployed on Cloud systems requires paying attention on both organisational and platform-related vulnerabilities. Taking advantage of the intrinsic flexibility provided by the association of security policies to services, we propose to adapt and extend the MDS strategy to generate security policies and deploying them depending to the execution context. To this end, a MDS@Runtime component is plugged on the middleware, paying attention on the hosting platform models , to select, compose and orchestrate the security services depending on the required protection level depending on the execution context.  The experiment reported in this paper shows how our MDS@runtime architecture can be plugged on the middleware and evaluate its performance level.
+Securing collaborative business process deployed on cloud systems requires paying attention on both organisational and platform-related vulnerabilities. Taking advantage of the intrinsic flexibility provided by the association of security policies to services, we propose to adapt and extend the MDS strategy to generate security policies and deploying them depending to the execution context. To this end, a MDS@run.time component is plugged on the middleware, paying attention on the hosting platform models to select, compose and orchestrate the security services depending on the required protection level and on the execution context.  The experiment reported in this paper shows how our MDS@run.time architecture can be plugged on the FraSCAti middleware and evaluate its performance level.
 Further works will focus on the integration of more detailed platform models and on vulnerabilities monitoring loops so that our coarse-grained vision of the execution context will be refined to increase the protection efficiency.
 
 
+% Utilisation de BibTex
 
+% \bibliographystyle{splncs03}
+% \bibliography{biblio} 
 
-
+% \end{document}
 
 \begin{thebibliography}{4}
 
-\bibitem{LS09} U. Lang and R. Schreiner. Model Driven Security Management : Making
-Security Management Manageable in Complex Distributed Systems. In Workshop on Modeling Security (MODSEC08) - International Conference on Model
-Driven Engineering Languages and Systems (MODELS), 2009.
-\bibitem{MRS11} P. Merle, R. Rouvoy, and L. Seinturier. A Reflective Platform for Highly Adaptive Multi-Cloud Systems. In International Workshop
+\bibitem{LS09}  Lang U.,Schreiner R.: Model Driven Security Management : Making
+Security Management Manageable in Complex Distributed Systems. In : Workshop on Modeling Security (MODSEC08) - International Conference on Model
+Driven Engineering Languages and Systems (MODELS), (2009)
+\bibitem{MRS11} Merle P., Rouvoy R., Seinturier L.: A Reflective Platform for Highly Adaptive Multi-Cloud Systems. In : International Workshop
 on Adaptive and Reflective Middleware (ARM’11) - 12th ACM/IFIP/USENIX
-International Middleware Conference, pages 14–21. ACM, 2011.
-\bibitem{OBG12} W. F. Ouedraogo, F. Biennier, and P. Ghodous.
-Adaptive Security Policy Model to Deploy Business Process in Cloud Infrastructure. In 2nd International Conference on Cloud Computing and Services Science (CLOSER 2012), pages 287–290, 2012.
-\bibitem{Lou08} A. Louis. Bus de Service ESB, Nouvelle technologie pour l’int\'egration. Livre
-blanc, Petals Link, 2008.
-\bibitem{PHM12} Fawaz Paraiso, Nicolas Haderer, Philippe Merle, Romain Rouvoy, and Lionel
-Seinturier. A Federated Multi-Cloud PaaS Infrastructure. In 5th International
-Conference on Cloud Computing (CLOUD’12), pages 392–399. IEEE, 2012.
-\bibitem{SHLP05} M.-T. Schmidt, B. Hutchison, P. Lambros, and R. Phippen. The Enterprise
-Service Bus : Making Service Oriented Architecture Real. IBM Systems Journal, 44 :781–797, 2005.
-\bibitem{SMF09}Lionel Seinturier, Philippe Merle, Damien Fournier, Nicolas Dolet, Valerio
-Schiavoni, and Jean-Bernard Stefani. Reconfigurable SCA applications with
-the FraSCAti Platform. In IEEE International Conference on Services Computing (SCC’09), pages 268–275. IEEE, 2009.
-\bibitem{SMR12}L. Seinturier, P. Merle, R. Rouvoy, D. Romero, V. Schiavoni, and J.B. Stefani. A component-based middleware platform for reconfigurable service-oriented architectures. Software : Practice and Experience, 42(5) :559–583, 2012.
+International Middleware Conference, pp. 14–-21, ACM, (2011)
+\bibitem{OBG12}  Ouedraogo W. F., Biennier F. , Ghodous P.:
+Adaptive Security Policy Model to Deploy Business Process in Cloud Infrastructure. In 2nd International Conference on Cloud Computing and Services Science (CLOSER 2012), pp. 287--290. Porto, Portugal, (2012)
+\bibitem{Lou08} Louis. A.: Bus de Service ESB, Nouvelle technologie pour l’int\'egration. Livre blanc, Petals Link. (2008)
+\bibitem{PHM12} Paraiso F., Haderer N., Merle P., Rouvoy R.,Seinturier L.: A Federated Multi-Cloud PaaS Infrastructure. In: 5th International
+Conference on Cloud Computing (CLOUD’12), pp 392–-399. IEEE, (2012)
+\bibitem{SHLP05} Schmidt M.-T., Hutchison B., Lambros P.,Phippen R.: The Enterprise
+Service Bus : Making Service Oriented Architecture Real. IBM Systems Journal, 44 pp:781–-797, (2005)
+\bibitem{SMF09}Seinturier L., Merle P., Fournier D., Dolet N., Schiavoni V., and Stefani J.B.: Reconfigurable SCA applications with
+the FraSCAti Platform. In IEEE International Conference on Services Computing (SCC’09), pages 268–-275. IEEE, (2009)
+\bibitem{SMR12}L. Seinturier, P. Merle, R. Rouvoy, D. Romero, V. Schiavoni, and J.B. Stefani. A component-based middleware platform for reconfigurable service-oriented architectures. Software : Practice and Experience, 42(5) pp.559–-583, (2012)
 
-\bibitem{SSL09}A. R. Souza, B. L. Silva, F. A. Lins, J. C. Damasceno, N. S. Rosa, P. R. Maciel,
-R. W. Medeiros, B. Stephenson, H. R. Motahari-Nezhad, J. Li, and C. Northfleet. Sec-MoSC Tooling - Incorporating Security Requirements into Service Composition. In 7th International Joint Conference on Service-Oriented Computing (ICSOC-ServiceWave 09), pages 649–650, 2009.
+\bibitem{SSL09}Souza A. R., Silva B. L., Lins F. A., Damasceno J. C., Rosa N. S.,  Maciel P. R., Medeiros R. W., Stephenson B., Motahari-Nezhad H. R., Li J., Northfleet C.: Sec-MoSC Tooling - Incorporating Security Requirements into Service Composition. In 7th International Joint Conference on Service-Oriented Computing (ICSOC-ServiceWave 09), pp 649–-650, (2009)
 
-\bibitem{WMS09}C. Wolter, M. Menzel, A. Schaad, P. Miseldine, and C. Meinel. Model-driven business process security requirement specification. Journal of Systems Architecture (JSA), pages 211–223, 2009.
+\bibitem{WMS09}Wolter C., Menzel M., Schaad A., Miseldine P., Meinel C.: Model-driven business process security requirement specification. Journal of Systems Architecture (JSA), pp.211-–223,(2009)
 
-\bibitem{LZN14} L. Lucio, Q. Zhang, P. H. Nguyen, M. Amrani, J. Klein, H. Vangheluwe, Y. Le Traon, Advances in Model-Driven Security. Advances in Computers 93, 2014, pages 103-152.
+\bibitem{LZN14} Lucio L., Zhang Q., Nguyen P. H., Amrani M., Klein J., Vangheluwe H., Le Traon Y.: Advances in Model-Driven Security. Advances in Computers 93, pp.103--152, (2014)
 
-\bibitem{OAS06} Organization for the Advancement of Structured Information Standards (OASIS), Reference Model for Service Oriented Architecture 1.0: OASIS Standard, 12 October 2006.
+\bibitem{OAS06} Organization for the Advancement of Structured Information Standards (OASIS).: Reference Model for Service Oriented Architecture 1.0: OASIS Standard,(2006)
 
 
-\bibitem{LBD02} T. Lodderstedt, D. Basin, J. Doser, SecureUML: A UML-Based Modeling Language for Model-Driven Security, UML '02 Proceedings of the 5th International Conference on The Unified Modeling Language,  Germany, 2002, pages 426-441.
-\bibitem{JJ02} J. Jürjens, UMLsec: extending UML for secure systems development, in: UML 2002 – The Unified Modeling Language, Model Engineering, Concepts and Tools, LNCS, vol. 2460, Germany, 2002, pages 412–425.
+\bibitem{LBD02} T. Lodderstedt, D. Basin, J. Doser.: SecureUML: A UML-Based Modeling Language for Model-Driven Security, UML '02 Proceedings of the 5th International Conference on the Unified Modeling Language,  Germany, 2002, pages 426--441.
+\bibitem{JJ02} J. Jürjens, UMLsec: extending UML for secure systems development, in: UML 2002 – The Unified Modeling Language, Model Engineering, Concepts and Tools, LNCS, vol. 2460, pp.412–-425, Germany, (2002)
     
-\bibitem{RFP07} A. Rodriguez, E. Fernandez-Medina, M. Piattini, A BPMN extension for the modeling of security requirements in business processes, the institute of electronics, Information and Communication Engineers (IEICE), Vol.E90-D, NO.4. 2007.
+\bibitem{RFP07} A. Rodriguez, E. Fernandez-Medina, M. Piattini.: A BPMN extension for the modeling of security requirements in business processes, the institute of electronics, Information and Communication Engineers (IEICE), Vol.E90-D, NO.4. (2007)
 
-\bibitem{OFG13} Wendpanga F. Ouedraogo, Frederique Biennier and Parisa Ghodous, Model driven security in multi-context,International Journal of Electronic Business Management, Vol. 11, No. 3,2013, pages pp. 178-190.  
+\bibitem{OFG13} Ouedraogo W. F., Biennier F., Ghodous P.: Model driven security in multi-cloud context,International Journal of Electronic Business Management, Vol. 11, No. 3,pp.178--190, (2013)  
 
 
-\bibitem{AHB08} Muhammad Alam, Michael Hafner ,	Ruth Breu, Constraint based role based access control in the SECTET-framework: A model-driven approach, Journal of Computer Security - Privacy, Security and Trust (PST), Volume 16 Issue 2, 2008, pages 223-260,
+\bibitem{AHB08} Alam H., Hafner M.,	Breu R.: Constraint based role based access control in the SECTET-framework: A model-driven approach. Journal of Computer Security - Privacy, Security and Trust (PST), Volume 16 Issue 2, pp.223--260, (2008)
 
-\bibitem{LU10} U. Lang, OpenPMF SCaaS: Authorization as a Service for Cloud \& SOA Applications, CLOUDCOM '10 Proceedings of the 2010 IEEE Second International Conference on Cloud Computing Technology and Science, USA, 2010, pages 634-643. 
+\bibitem{LU10} Lang U.: OpenPMF SCaaS: Authorization as a Service for Cloud \& SOA Applications. CLOUDCOM '10 Proceedings of the 2010 IEEE Second International Conference on Cloud Computing Technology and Science, pp.634--643, USA, (2010) 
 
-\bibitem{CSA11} Cloud Security Alliance, “Security Guidance for Critical Areas of Focus in Cloud Computing- CSA Guidance v3”, http://www.cloudsecurityalliance.org/guidance/csaguide.v3.0.pdf, 2011.
+\bibitem{CSA11} Cloud Security Alliance.: Security Guidance for Critical Areas of Focus in Cloud Computing- CSA Guidance v3, http://www.cloudsecurityalliance.org/guidance/csaguide.v3.0.pdf, (2011)
 
-\bibitem{MPB12} Modi, C., Patel, D., Borisanya, B., Patel, A., Rajarajan, M., “A novel framework for intrusion detection in cloud”, Proceeding SIN '12 Proceedings of the Fifth International Conference on Security of Information and Networks, ACM New York, pp.67-74, NY, USA, 2012.
+\bibitem{MPB12} Modi, C., Patel, D., Borisanya, B., Patel, A., Rajarajan, M., “A novel framework for intrusion detection in cloud”, Proceedings of the Fifth International Conference on Security of Information and Networks (SIN '12), ACM New York, pages 67--74, NY, USA, (2012)
 
-\bibitem{AVG11} T. Avgerinos et al., AEG—Automatic Exploit Generation,Network and Distributed System Security Symp.
-(NDSS11), Internet Soc., 2011, http://security.ece.cmu.edu/aeg/aeg
--current.pdf.
+\bibitem{AVG11} Avgerinos T., Cha S.K., Hao B.L.T., Brumley D., AEG—Automatic Exploit Generation, Network and Distributed System Security Symp.
+(NDSS11), Internet Soc., http://security.ece.cmu.edu/aeg/aeg
+-current.pdf, (2011).
 \end{thebibliography}
 
 \end{document}
