@@ -87,7 +87,7 @@ A Security as a Service component is also proposed to support this "security out
 This approach is implemented by a proof of concept prototype built on top of the FraSCAti service-oriented middleware.
 
 
-We first present the context and a motivating example (section ~\ref{contextAndMotivation})  before defining the way MDS is extended in a Security Models@run.time vision and the related architecture (section ~\ref{MDStoMDSatRuntime}). We detail the way this architecture is implemented and plugged on FraSCAti middleware (section ~\ref{mdsAtRuntimeWithFrascati}) and evaluate its performance (section ~\ref{sec:evaluation}) before confronting our proposal with the related works (section ~\ref{relatedwork}).
+We first present the context and a motivating example (Section~\ref{contextAndMotivation}) before defining the way MDS is extended in a MDS@run.time vision and the related architecture (Section~\ref{MDStoMDSatRuntime}). We detail the way this architecture is implemented and plugged on the FraSCAti middleware (Section~\ref{mdsAtRuntimeWithFrascati}) and evaluate its performance (Section~\ref{sec:evaluation}) before confronting our proposal with related work (Section~\ref{relatedwork}).
 
 \section{Context and motivating example}
 \label{contextAndMotivation}
@@ -97,7 +97,7 @@ The increased importance of collaborative business strategies leads to reorganiz
 \subsection{Motivating example}
 \label{example}
 
-A motivating example illustrating a Collaborative Process organisation is presented Fig.~\ref{fig:bp}. Setting an e-government service to improve a scholarship management process leads to the development of a collaborative "on-line" e-governement organisation allowing both students, grant administration and academic partners to share students' curriculum information. To this end, a common BP associated to scholarship business feature is built, combining services and personal workflows from both grant administration and academic partners, challenging new security features such as partner authentication, access control, non repudiation on the student information. 
+A motivating example illustrating a Collaborative Process organisation is presented in Fig.~\ref{fig:bp}. Setting an e-government service to improve a scholarship management process leads to the development of a collaborative on-line e-governement organisation allowing both students, grant administration and academic partners to share students' curriculum information. To this end, a common BP associated to scholarship business feature is built, combining services and personal workflows from both grant administration and academic partners, challenging new security features such as partner authentication, access control, non repudiation on the student information. 
 
 
 This collaborative BP is split among 3 lanes associated to the different participants (the student, the scholarship management service and the academic institution). Instead of exchanging paper/electronic forms containing student applications, curriculum information that must be the regional council opens its scholarship information system to allow academic institution and students to interact directly with the corresponding business services. As students' personal information are managed, a particular attention must be paid on privacy requirements. While any back-office scholarship employee can access without any control to the student scholarship resource, more precise authentication and authorisation processes must be deployed for the e-government execution: students can access via a secured connection to their own scholarship form whereas academic institution administrative staff should access to the validation forms for the students registered in one of their institution curriculum.
@@ -117,7 +117,7 @@ Such protection means can either be deployed directly in the service operation o
 \begin{figure}  
 \centering
 \includegraphics[height=135pt, width=\linewidth]{scholarshipPolicies.png}
-\caption{Security policies associated to the \textit{Scholarship}  resource.}
+\caption{Security policies associated to the \textit{Scholarship} resource.}
 \label{fig:policy}
 \end{figure}
 
@@ -135,7 +135,7 @@ Fig.~\ref{fig:policy}). This resource requires authentication (lines 2-8) using 
 
 \section{From MDS to MDS@Run.time}
 \label{MDStoMDSatRuntime}
-Different methods can be used to set a consistent security policy based on vulnerability and threats models such as EBIOS, MEHARI, OCTAVE, SNA \footnote{https://www.enisa.europa.eu/activities/risk-management/current-risk/risk-management-inventory/rm-isms}. However, they are complex and designed for a perimetrised environment and are not end-user oriented. To overcome these limits, business architects should be able to define security policies while building new BP. To this end, MDS can be used to attach security requirements specification in the BP and generate adapted security policies.
+Different methods can be used to set a consistent security policy based on vulnerability and threats models such as EBIOS, MEHARI, OCTAVE, SNA\footnote{https://www.enisa.europa.eu/activities/risk-management/current-risk/risk-management-inventory/rm-isms}. However, they are complex and designed for a perimetrised environment and are not end-user oriented. To overcome these limits, business architects should be able to define security policies while building new BP. To this end, MDS can be used to attach security requirements specification in the BP and generate adapted security policies.
 
 \subsection{MDS for Services}
 In previous work~\cite{OBG12}, we have proposed to enrich the MDS approach with a security pattern engineering strategy to capture protection requirements and deployment platform information to generate automatically the security policies that will be attached to the different services (see Fig.~\ref{fig:mds}).
@@ -183,9 +183,9 @@ Implementing a Service Oriented Architecture (SOA) requires a middleware for bot
 Our architecture is built on the traditional service/middleware/hosting platforms architecture (see Fig.~\ref{fig:archiA}). In order to avoid under or over protection depending on the runtime context, we propose to outsource the security management. As stated in the previous section, the security policy attached to each business service expresses the protection requirement for this service. Plugged on the classical business service/middleware/hosting cloud platform(s) architecture, our MDS@run.time architecture (see Fig.~\ref{fig:archiB}) consists in:
 
 \begin{itemize}
-\settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
-\itemsep5pt\relax
-\renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
+%\settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
+%\itemsep5pt\relax
+%\renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
 \item A middleware specific \texttt{Interceptor} component plugged on the middleware intercepts each service/middleware interaction (step 1) and routes this interaction to the \texttt{MDS@run.time} component (step 2).
 \item	The \texttt{MDS@run.time} component is the core component to achieve the dynamic security deployment. It consists in three sub components:
 \begin{itemize}
@@ -230,9 +230,9 @@ These techniques use the Apache CXF interception mechanism. The \texttt{Intent} 
 The \texttt{MDS@run.time} composite\footnote{An SCA composite is an SCA component containing a set of SCA components.} is invoked by the \texttt{Intent} component of the \texttt{Inter\-ceptor} composite. It includes:
 
 \begin{itemize}
-\settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
-\itemsep8pt\relax
-\renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
+%\settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
+%\itemsep8pt\relax
+%\renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
 
 \item The \texttt{Mediator} component is responsible for analyzing called service requests intercepted by the \texttt{Intent} component and  encapsulated into a \texttt{Request} object. It also identifies the security policy rules associated to business services invoked by clients. Thus, through the \texttt{Request} object, the \texttt{Mediator} receives information of the services involved in the interaction. This information is used to get policies associated to resources (the business services functionality implemented by the service operation). These policies are then analyzed and orchestrated by the \texttt{Mediator} to call the required security services.
 \item The \texttt{PolicyManager} component manages the policies. It receives from the \texttt{Mediator} the resource or service reference requested and the link to the policy file. It returns to the \texttt{Mediator} the list of security policies to apply.
@@ -246,9 +246,9 @@ The \texttt{Security as a Service} composite is invoked by the \texttt{Mediator}
 
 
 \begin{itemize}
-\settowidth{\leftmargin}{{\Large$\square$}}\advance\leftmargin\labelsep
-\itemsep8pt\relax
-\renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
+%\settowidth{\leftmargin}{{\Large$\square$}}\advance%\leftmargin\labelsep
+%\itemsep8pt\relax
+%\renewcommand\labelitemi{{\lower1.5pt\hbox{\Large$\square$}}}
 
 \item The \texttt{SecaaS} component is the composite entry point. It receives from the \texttt{Mediator} component the security policies to be applied. It is responsible for analyzing these policies, to identify the type of security services (authentication, authorization, etc.) to call.
 \item The \texttt{Authentication} component is used to prove the user identity (of human or other service). This component receives from the \texttt{SecaaS} component the policy rule to apply, extracts information about the security pattern and invokes the security mechanism to be applied. It can be a weak authentication mechanism such as login/password or strong authentication such as One Time Password (OTP) or two factors authentication. This \texttt{Authentication} component includes subcomponents such as \texttt{SSORegistry} (Single Sign On Registry) component used to store information about  authentication of sessions and to allow to retrieve user information without restarting authentication.
